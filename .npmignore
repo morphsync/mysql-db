@@ -1,0 +1,12 @@
+.git
+.gitignore
+.env
+.env.example
+node_modules/
+test/
+tests/
+*.test.js
+*.spec.js
+.vscode/
+.idea/
+.DS_Store
