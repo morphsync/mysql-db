@@ -1,20 +1,24 @@
 # @morphsync/mysql-db
 
-A lightweight, fluent MySQL query builder for Node.js with connection pooling and transaction support.
+A professional, lightweight MySQL query builder for Node.js with fluent interface, flexible configuration, and transaction support.
 
 [![npm version](https://img.shields.io/npm/v/@morphsync/mysql-db.svg)](https://www.npmjs.com/package/@morphsync/mysql-db)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/node/v/@morphsync/mysql-db.svg)](https://nodejs.org)
 
+**Version 1.1.0** - Now with flexible connection configuration!
+
 ## Features
 
 - 🚀 Fluent query builder interface
-- 🔄 Connection pooling
-- 💾 Transaction support
-- 🛡️ SQL injection protection
-- 📦 Zero dependencies (except mysql2)
-- 🔧 Environment-based configuration
-- ⚡ Promise-based API
+- 🔄 Flexible connection configuration (constructor or environment variables)
+- 💾 Transaction support (commit, rollback)
+- 🛡️ SQL injection protection with parameterized queries
+- 📦 Minimal dependencies (mysql2 + dotenv)
+- 🔧 Environment-based or programmatic configuration
+- ⚡ Promise-based async/await API
+- 🎯 Method chaining for clean, readable queries
+- 🔍 Support for complex queries (joins, grouping, ordering)
 
 ## Installation
 
@@ -23,6 +27,8 @@ npm install @morphsync/mysql-db
 ```
 
 ## Quick Start
+
+### Option 1: Using Environment Variables
 
 ```javascript
 const { MySQL } = require('@morphsync/mysql-db');
@@ -40,16 +46,62 @@ console.log(users);
 await db.disconnect();
 ```
 
+### Option 2: Using Constructor Parameters (New in v1.1.0)
+
+```javascript
+const { MySQL } = require('@morphsync/mysql-db');
+
+const db = new MySQL('localhost', 3306, 'root', 'password', 'my_database');
+await db.connect();
+
+const users = await db.table('users').get();
+await db.disconnect();
+```
+
 ## Configuration
+
+### Method 1: Environment Variables (Recommended)
 
 Create a `.env` file in your project root:
 
 ```env
 DB_HOST=localhost
+DB_PORT=3306
 DB_USER=root
 DB_PASS=your_password
 DB_NAME=your_database
-DB_PORT=3306
+```
+
+Then initialize without parameters:
+
+```javascript
+const db = new MySQL();
+await db.connect();
+```
+
+### Method 2: Constructor Parameters (New in v1.1.0)
+
+Pass connection details directly to the constructor:
+
+```javascript
+const db = new MySQL(
+  'localhost',      // host
+  3306,             // port
+  'root',           // user
+  'password',       // password
+  'my_database'     // database name
+);
+await db.connect();
+```
+
+### Method 3: Hybrid Approach
+
+Override specific environment variables:
+
+```javascript
+// Use env vars for most, override database name
+const db = new MySQL(null, null, null, null, 'custom_database');
+await db.connect();
 ```
 
 ## API Reference
@@ -237,18 +289,37 @@ try {
 ## Connection Management
 
 ```javascript
+// Initialize with environment variables
 const db = new MySQL();
 
-// Connect
+// Or with custom credentials
+const db = new MySQL('localhost', 3306, 'root', 'password', 'my_db');
+
+// Connect to database
 await db.connect();
 
-// Check connection status
-if (db.isConnected()) {
-  console.log('Database connected');
-}
+// Perform operations
+const users = await db.table('users').get();
 
-// Disconnect
+// Always disconnect when done
 await db.disconnect();
+```
+
+### Multiple Database Connections
+
+```javascript
+// Connect to multiple databases
+const mainDB = new MySQL('localhost', 3306, 'root', 'pass', 'main_db');
+const analyticsDB = new MySQL('localhost', 3306, 'root', 'pass', 'analytics_db');
+
+await mainDB.connect();
+await analyticsDB.connect();
+
+const users = await mainDB.table('users').get();
+const stats = await analyticsDB.table('statistics').get();
+
+await mainDB.disconnect();
+await analyticsDB.disconnect();
 ```
 
 ## Examples
@@ -306,9 +377,16 @@ class UserService {
 }
 ```
 
+## What's New in v1.1.0
+
+- ✨ **Flexible Constructor**: Pass database credentials directly to constructor
+- 🔧 **Hybrid Configuration**: Mix constructor parameters with environment variables
+- 🎯 **Multiple Connections**: Easily manage multiple database connections
+- 📝 **Enhanced Documentation**: Comprehensive examples and use cases
+
 ## Requirements
 
-- Node.js >= 12.0.0
+- Node.js >= 14.0.0
 - MySQL >= 5.7 or MariaDB >= 10.2
 
 ## Contributing
@@ -323,9 +401,23 @@ class UserService {
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Changelog
+
+### v1.1.0 (Latest)
+- Added constructor parameters for flexible database configuration
+- Support for multiple simultaneous database connections
+- Enhanced documentation with more examples
+- Improved connection management
+
+### v1.0.1
+- Initial stable release
+- Fluent query builder interface
+- Transaction support
+- Environment-based configuration
+
 ## Author
 
-**Jay Chauhan**
+**Jay Chauhan** - [Morphsync](https://morphsync.com)
 
 ## Support
 

@@ -10,12 +10,22 @@ require('dotenv').config();  // Load environment variables from a .env file into
 class MySQL {  // Define the MySQL class used to build and run parameterized queries
     /**
      * @constructor
+     * @param {string} db_host - Database host (defaults to process.env.DB_HOST)
+     * @param {number} db_port - Database port (defaults to process.env.DB_PORT)
+     * @param {string} db_user - Database user (defaults to process.env.DB_USER)
+     * @param {string} db_password - Database password (defaults to process.env.DB_PASS)
+     * @param {string} db_name - Database name (defaults to process.env.DB_NAME)
      * Initializes the MySQL class with default values for query parts and connection.
      */
-    constructor() {  // Constructor initializes instance state for connection and query building
-        this.connection = null;  // Holds the active MySQL connection (null until connect() is called)
-        this.queryParts = this.#resetState();  // Initialize the queryParts object with default empty parts
-        this.lastQuery = '';  // Stores the last executed SQL string for debugging and logging
+    constructor(db_host = null, db_port = null, db_user = null, db_password = null, db_name = null) {
+        this.connection = null;  // Holds the database connection
+        this.queryParts = this.#resetState();  // Initialize query parts
+        this.lastQuery = '';  // Holds the last executed query
+        this.db_host = db_host || process.env.DB_HOST;
+        this.db_port = db_port || process.env.DB_PORT;
+        this.db_user = db_user || process.env.DB_USER;
+        this.db_password = db_password || process.env.DB_PASS;
+        this.db_name = db_name || process.env.DB_NAME;
     }
 
     /**
@@ -39,15 +49,16 @@ class MySQL {  // Define the MySQL class used to build and run parameterized que
 
     /**
      * @function connect
-     * @description Connects to the MySQL database using credentials from environment variables.
+     * @description Connects to the MySQL database using credentials from constructor or environment variables.
      * @returns {Promise<void>}
      */
-    async connect() {  // Establish a connection to the MySQL server using env-configured credentials
+    async connect() {
         this.connection = await mysql.createConnection({
-            host: process.env.DB_HOST,  // Database host taken from DB_HOST
-            user: process.env.DB_USER,  // Database username taken from DB_USER
-            password: process.env.DB_PASS,  // Database password taken from DB_PASS
-            database: process.env.DB_NAME,  // Database name taken from DB_NAME
+            host: this.db_host,
+            port: this.db_port,
+            user: this.db_user,
+            password: this.db_password,
+            database: this.db_name
         });
     }
 
