@@ -2,8 +2,9 @@
 
 A lightweight, fluent MySQL query builder for Node.js with connection pooling and transaction support.
 
-[![npm version](https://badge.fury.io/js/%40morphsync%2Fmysql-db.svg)](https://badge.fury.io/js/%40morphsync%2Fmysql-db)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://img.shields.io/npm/v/@morphsync/mysql-db.svg)](https://www.npmjs.com/package/@morphsync/mysql-db)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/node/v/@morphsync/mysql-db.svg)](https://nodejs.org)
 
 ## Features
 
@@ -332,4 +333,4 @@ If you encounter any issues or have questions, please [open an issue](https://gi
 
 ---
 
-Made with ❤️ by [Morphsync](https://morphsync.com)#
+Made with ❤️ by [Morphsync](https://morphsync.com)
