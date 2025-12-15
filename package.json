@@ -1,6 +1,6 @@
 {
     "name": "@morphsync/mysql-db",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "MySQL query builder with fluent interface for Morphsync projects",
     "main": "index.js",
     "author": "Jay Chauhan",
