@@ -50,15 +50,17 @@ class MySQL {  // Define the MySQL class used to build and run parameterized que
     /**
      * @function connect
      * @description Connects to the MySQL database using credentials from constructor or environment variables.
+     * @param {boolean} multipleStatements - Enable multiple statements execution (default: false)
      * @returns {Promise<void>}
      */
-    async connect() {
+    async connect(multipleStatements = false) {
         this.connection = await mysql.createConnection({
             host: this.db_host,
             port: this.db_port,
             user: this.db_user,
             password: this.db_password,
-            database: this.db_name
+            database: this.db_name,
+            multipleStatements
         });
     }
 
@@ -356,6 +358,26 @@ class MySQL {  // Define the MySQL class used to build and run parameterized que
             return true;
         } catch (error) {
             console.error('Error creating database:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * @function executeRawQuery
+     * @description Executes a raw SQL query (use for schema files or complex queries)
+     * @param {string} sql - The raw SQL query to execute
+     * @returns {Promise<any>}
+     */
+    async executeRawQuery(sql) {
+        if (!this.connection) {
+            throw new Error('Database connection is not established. Call connect() first.');
+        }
+
+        try {
+            const [result] = await this.connection.query(sql);
+            return result;
+        } catch (error) {
+            console.error('Error executing raw query:', error);
             throw error;
         }
     }
