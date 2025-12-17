@@ -337,6 +337,30 @@ class MySQL {  // Define the MySQL class used to build and run parameterized que
     }
 
     /**
+     * @function createDatabase
+     * @description Creates a new database with specified charset and collation
+     * @param {string} dbName - The name of the database to create
+     * @param {string} charset - Character set (default: utf8mb4)
+     * @param {string} collation - Collation (default: utf8mb4_unicode_ci)
+     * @returns {Promise<boolean>}
+     */
+    async createDatabase(dbName, charset = 'utf8mb4', collation = 'utf8mb4_unicode_ci') {
+        if (!this.connection) {
+            throw new Error('Database connection is not established. Call connect() first.');
+        }
+
+        const query = `CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET ${charset} COLLATE ${collation}`;
+        
+        try {
+            await this.connection.execute(query);
+            return true;
+        } catch (error) {
+            console.error('Error creating database:', error);
+            throw error;
+        }
+    }
+
+    /**
      * @function createTableFromJson
      * @description Creates a table from JSON schema definition
      * @param {string} tableName - The name of the table to create
