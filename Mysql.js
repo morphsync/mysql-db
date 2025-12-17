@@ -335,6 +335,41 @@ class MySQL {  // Define the MySQL class used to build and run parameterized que
     getLastQuery() {  // Accessor returning the last executed SQL string for debugging or logging
         return this.lastQuery;  // Return the stored lastQuery value
     }
+
+    /**
+     * @function createTableFromJson
+     * @description Creates a table from JSON schema definition
+     * @param {string} tableName - The name of the table to create
+     * @param {Object} schema - JSON schema defining columns and constraints
+     * @returns {Promise<boolean>}
+     */
+    async createTableFromJson(tableName, schema) {
+        if (!this.connection) {
+            throw new Error('Database connection is not established. Call connect() first.');
+        }
+
+        const columns = [];
+        for (const [columnName, definition] of Object.entries(schema)) {
+            let columnDef = `\`${columnName}\` ${definition.type}`;
+            if (definition.length) columnDef += `(${definition.length})`;
+            if (definition.notNull) columnDef += ' NOT NULL';
+            if (definition.autoIncrement) columnDef += ' AUTO_INCREMENT';
+            if (definition.primaryKey) columnDef += ' PRIMARY KEY';
+            if (definition.unique) columnDef += ' UNIQUE';
+            if (definition.default !== undefined) columnDef += ` DEFAULT ${definition.default}`;
+            columns.push(columnDef);
+        }
+
+        const query = `CREATE TABLE IF NOT EXISTS \`${tableName}\` (${columns.join(', ')})`;
+        
+        try {
+            await this.connection.execute(query);
+            return true;
+        } catch (error) {
+            console.error('Error creating table:', error);
+            throw error;
+        }
+    }
 }
 
 module.exports = MySQL;  // Export the MySQL class as a CommonJS module for external usage
